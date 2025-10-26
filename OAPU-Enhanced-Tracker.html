@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>One-Arm Push-Up 8-Week Program</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-number {
+            font-size: 3em;
+            font-weight: bold;
+            color: #667eea;
+            margin: 10px 0;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .progress-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .section-title {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #333;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .overall-progress {
+            margin-bottom: 20px;
+        }
+        
+        .progress-bar-container {
+            background: #e0e0e0;
+            border-radius: 25px;
+            height: 40px;
+            overflow: hidden;
+            position: relative;
+            margin: 15px 0;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border-radius: 25px;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .chart-container {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .workout-table {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        tr:hover {
+            background: #f5f5f5;
+        }
+        
+        .week-header {
+            background: #f0f0f0;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .milestone-badges {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .badge {
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            background: #f5f5f5;
+            min-width: 100px;
+        }
+        
+        .badge.achieved {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .badge-icon {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+        
+        .heatmap {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin-top: 20px;
+        }
+        
+        .heatmap-cell {
+            aspect-ratio: 1;
+            border-radius: 5px;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            transition: all 0.3s;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .heatmap-cell.completed {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: bold;
+        }
+        
+        .heatmap-cell:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .heatmap-cell.rest-day {
+            background: #f5f5f5;
+            color: #999;
+            font-style: italic;
+        }
+        
+        .strength-tracker {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .arm-tracker {
+            text-align: center;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 10px;
+        }
+        
+        .arm-tracker input {
+            width: 80px;
+            padding: 10px;
+            font-size: 1.5em;
+            text-align: center;
+            border: 2px solid #667eea;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .strength-tracker {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💪 One-Arm Push-Up Mastery</h1>
+            <div class="subtitle">8-Week Progressive Training Program</div>
+        </header>
+        
+        <div class="dashboard">
+            <div class="stat-card">
+                <div class="stat-label">Overall Progress</div>
+                <div class="stat-number" id="overallProgress">0%</div>
+                <div>of program completed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Current Week</div>
+                <div class="stat-number" id="currentWeek">1</div>
+                <div>of 8 weeks</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Days Completed</div>
+                <div class="stat-number" id="daysCompleted">0</div>
+                <div>training sessions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Current Streak</div>
+                <div class="stat-number" id="streak">0</div>
+                <div>consecutive days</div>
+            </div>
+        </div>
+        
+        <div class="progress-section">
+            <h2 class="section-title">📊 Overall Program Progress</h2>
+            <div class="overall-progress">
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="mainProgressBar" style="width: 0%">0%</div>
+                </div>
+            </div>
+            
+            <div class="milestone-badges">
+                <div class="badge" id="badge25">
+                    <div class="badge-icon">🥉</div>
+                    <div>Quarter Way</div>
+                    <div>25%</div>
+                </div>
+                <div class="badge" id="badge50">
+                    <div class="badge-icon">🥈</div>
+                    <div>Half Way</div>
+                    <div>50%</div>
+                </div>
+                <div class="badge" id="badge75">
+                    <div class="badge-icon">🥇</div>
+                    <div>Three Quarters</div>
+                    <div>75%</div>
+                </div>
+                <div class="badge" id="badge100">
+                    <div class="badge-icon">🏆</div>
+                    <div>Complete!</div>
+                    <div>100%</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="charts-grid">
+            <div class="chart-container">
+                <h3 class="section-title">📈 Weekly Completion Rate</h3>
+                <canvas id="weeklyChart"></canvas>
+            </div>
+            
+            <div class="chart-container">
+                <h3 class="section-title">💪 Left vs Right Arm Strength</h3>
+                <canvas id="strengthChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="progress-section">
+            <h2 class="section-title">📅 Training Calendar</h2>
+            <p style="margin-bottom: 15px; color: #666;">Click on any day to mark it as a training day. Days 1-4, 8-11, 15-18, etc. are scheduled training days.</p>
+            <div class="heatmap" id="trainingHeatmap"></div>
+        </div>
+        
+        <div class="progress-section">
+            <h2 class="section-title">🎯 Strength Tracking</h2>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <label style="font-size: 1.1em; font-weight: bold; margin-right: 10px;">Select Week:</label>
+                <select id="weekSelector" style="padding: 10px 20px; font-size: 1.1em; border: 2px solid #667eea; border-radius: 8px; background: white; cursor: pointer;">
+                    <option value="0">Week 0 (Baseline)</option>
+                    <option value="1">Week 1</option>
+                    <option value="2">Week 2</option>
+                    <option value="3">Week 3</option>
+                    <option value="4">Week 4</option>
+                    <option value="5">Week 5</option>
+                    <option value="6">Week 6</option>
+                    <option value="7">Week 7</option>
+                    <option value="8">Week 8</option>
+                </select>
+            </div>
+            <div class="strength-tracker">
+                <div class="arm-tracker">
+                    <h3>💪 Right Arm</h3>
+                    <input type="number" id="rightArmReps" value="0" min="0" max="50">
+                    <div>Max One-Arm Push-Ups</div>
+                </div>
+                <div class="arm-tracker">
+                    <h3>💪 Left Arm</h3>
+                    <input type="number" id="leftArmReps" value="0" min="0" max="50">
+                    <div>Max One-Arm Push-Ups</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="workout-table">
+            <h2 class="section-title">📋 8-Week Training Schedule</h2>
+            <table id="workoutTable">
+                <thead>
+                    <tr>
+                        <th>Week</th>
+                        <th>Day</th>
+                        <th>Exercise</th>
+                        <th>Sets / Reps</th>
+                        <th>✓ Done</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody id="workoutBody"></tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script>
+        // Workout program data
+        const workoutProgram = [
+            {week: 1, day: 1, exercises: [
+                ["One-Arm Incline Push-ups", "3x6 each side"],
+                ["Archer Push-ups", "3x5 each side"],
+                ["One-Arm Eccentric (Negative) Push-ups", "3x3 slow each side"],
+                ["One-Arm Isometric Hold", "3x10 sec each"],
+                ["Assisted One-Arm Push-ups", "3x5 each side"],
+                ["Plank (Core Stability)", "60 sec"]
+            ]},
+            {week: 1, day: 2, exercises: [
+                ["One-Arm Incline Push-ups", "3x6 each side"],
+                ["Archer Push-ups", "3x5 each side"],
+                ["One-Arm Eccentric (Negative) Push-ups", "3x3 slow each side"],
+                ["One-Arm Isometric Hold", "3x10 sec each"],
+                ["Assisted One-Arm Push-ups", "3x5 each side"],
+                ["Plank (Core Stability)", "60 sec"]
+            ]},
+            {week: 1, day: 3, exercises: [
+                ["One-Arm Incline Push-ups", "3x6 each side"],
+                ["Archer Push-ups", "3x5 each side"],
+                ["One-Arm Eccentric (Negative) Push-ups", "3x3 slow each side"],
+                ["One-Arm Isometric Hold", "3x10 sec each"],
+                ["Assisted One-Arm Push-ups", "3x5 each side"],
+                ["Plank (Core Stability)", "60 sec"]
+            ]},
+            {week: 1, day: 4, exercises: [
+                ["One-Arm Incline Push-ups", "3x6 each side"],
+                ["Archer Push-ups", "3x5 each side"],
+                ["One-Arm Eccentric (Negative) Push-ups", "3x3 slow each side"],
+                ["One-Arm Isometric Hold", "3x10 sec each"],
+                ["Assisted One-Arm Push-ups", "3x5 each side"],
+                ["Plank (Core Stability)", "60 sec"]
+            ]}
+        ];
+        
+        // Generate all 8 weeks
+        const fullProgram = [];
+        for (let week = 1; week <= 8; week++) {
+            for (let day = 1; day <= 4; day++) {
+                fullProgram.push({
+                    week: week,
+                    day: day,
+                    exercises: workoutProgram[0].exercises
+                });
+            }
+        }
+        
+        // Load saved data
+        let completedExercises = JSON.parse(localStorage.getItem('completedExercises')) || {};
+        let completedDays = JSON.parse(localStorage.getItem('completedDays')) || {};
+        let strengthData = JSON.parse(localStorage.getItem('strengthData')) || {
+            right: [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            left: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        };
+        
+        // Initialize workout table
+        function initWorkoutTable() {
+            const tbody = document.getElementById('workoutBody');
+            let html = '';
+            let exerciseId = 0;
+            
+            fullProgram.forEach((session, sessionIdx) => {
+                session.exercises.forEach((exercise, exIdx) => {
+                    const isFirstExercise = exIdx === 0;
+                    const checked = completedExercises[exerciseId] ? 'checked' : '';
+                    
+                    html += `
+                        <tr ${isFirstExercise ? 'class="week-header"' : ''}>
+                            <td>${isFirstExercise ? `Week ${session.week}` : ''}</td>
+                            <td>${isFirstExercise ? `Day ${session.day}` : ''}</td>
+                            <td>${exercise[0]}</td>
+                            <td>${exercise[1]}</td>
+                            <td><input type="checkbox" class="checkbox" data-id="${exerciseId}" ${checked}></td>
+                            <td><input type="text" style="width:100%;border:none;padding:5px;" placeholder="Add notes..."></td>
+                        </tr>
+                    `;
+                    exerciseId++;
+                });
+            });
+            
+            tbody.innerHTML = html;
+            
+            // Add event listeners
+            document.querySelectorAll('.checkbox').forEach(cb => {
+                cb.addEventListener('change', handleCheckboxChange);
+            });
+        }
+        
+        function handleCheckboxChange(e) {
+            const id = e.target.dataset.id;
+            if (e.target.checked) {
+                completedExercises[id] = true;
+            } else {
+                delete completedExercises[id];
+            }
+            localStorage.setItem('completedExercises', JSON.stringify(completedExercises));
+            updateDashboard();
+        }
+        
+        function updateDashboard() {
+            const totalExercises = fullProgram.length * 6;
+            const completed = Object.keys(completedExercises).length;
+            const percentage = Math.round((completed / totalExercises) * 100);
+            
+            document.getElementById('overallProgress').textContent = percentage + '%';
+            document.getElementById('mainProgressBar').style.width = percentage + '%';
+            document.getElementById('mainProgressBar').textContent = percentage + '%';
+            
+            // Update badges
+            if (percentage >= 25) document.getElementById('badge25').classList.add('achieved');
+            if (percentage >= 50) document.getElementById('badge50').classList.add('achieved');
+            if (percentage >= 75) document.getElementById('badge75').classList.add('achieved');
+            if (percentage >= 100) document.getElementById('badge100').classList.add('achieved');
+            
+            // Calculate days completed
+            const daysCompleted = Math.floor(completed / 6);
+            document.getElementById('daysCompleted').textContent = daysCompleted;
+            
+            // Calculate current week
+            const currentWeek = Math.min(Math.floor(daysCompleted / 4) + 1, 8);
+            document.getElementById('currentWeek').textContent = currentWeek;
+            
+            // Calculate streak (simplified)
+            document.getElementById('streak').textContent = Math.min(daysCompleted, 7);
+            
+            updateCharts();
+            updateHeatmap();
+        }
+        
+        function updateCharts() {
+            // Weekly completion chart
+            const weeklyData = [];
+            for (let week = 1; week <= 8; week++) {
+                const weekStart = (week - 1) * 24;
+                const weekEnd = week * 24;
+                let weekCompleted = 0;
+                for (let i = weekStart; i < weekEnd; i++) {
+                    if (completedExercises[i]) weekCompleted++;
+                }
+                weeklyData.push(Math.round((weekCompleted / 24) * 100));
+            }
+            
+            if (window.weeklyChart && typeof window.weeklyChart.destroy === 'function') {
+                window.weeklyChart.destroy();
+            }
+            const ctx1 = document.getElementById('weeklyChart').getContext('2d');
+            window.weeklyChart = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7', 'Week 8'],
+                    datasets: [{
+                        label: 'Completion %',
+                        data: weeklyData,
+                        backgroundColor: 'rgba(102, 126, 234, 0.8)',
+                        borderColor: 'rgba(102, 126, 234, 1)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+            
+            // Strength comparison chart
+            if (window.strengthChart && typeof window.strengthChart.destroy === 'function') {
+                window.strengthChart.destroy();
+            }
+            const ctx2 = document.getElementById('strengthChart').getContext('2d');
+            window.strengthChart = new Chart(ctx2, {
+                type: 'line',
+                data: {
+                    labels: ['Week 0', 'Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7', 'Week 8'],
+                    datasets: [{
+                        label: 'Right Arm',
+                        data: strengthData.right,
+                        borderColor: 'rgba(102, 126, 234, 1)',
+                        backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                        tension: 0.4
+                    }, {
+                        label: 'Left Arm',
+                        data: strengthData.left,
+                        borderColor: 'rgba(118, 75, 162, 1)',
+                        backgroundColor: 'rgba(118, 75, 162, 0.2)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+        
+        function updateHeatmap() {
+            const heatmap = document.getElementById('trainingHeatmap');
+            let html = '';
+            const totalDays = 56; // 8 weeks * 7 days
+            
+            for (let i = 0; i < totalDays; i++) {
+                const dayWorkouts = i % 7 < 4; // Only 4 training days per week
+                const dayIndex = Math.floor(i / 7) * 4 + (i % 7);
+                const dayStart = dayIndex * 6;
+                let completed = false;
+                
+                if (dayWorkouts) {
+                    for (let j = dayStart; j < dayStart + 6; j++) {
+                        if (completedExercises[j]) {
+                            completed = true;
+                            break;
+                        }
+                    }
+                }
+                
+                html += `<div class="heatmap-cell ${completed ? 'completed' : ''}">${i + 1}</div>`;
+            }
+            
+            heatmap.innerHTML = html;
+        }
+        
+        // Strength tracking
+        let selectedWeek = 0;
+        
+        document.getElementById('weekSelector').addEventListener('change', function() {
+            selectedWeek = parseInt(this.value);
+            // Load the saved strength values for this week
+            document.getElementById('rightArmReps').value = strengthData.right[selectedWeek] || 0;
+            document.getElementById('leftArmReps').value = strengthData.left[selectedWeek] || 0;
+        });
+        
+        document.getElementById('rightArmReps').addEventListener('change', function() {
+            strengthData.right[selectedWeek] = parseInt(this.value) || 0;
+            localStorage.setItem('strengthData', JSON.stringify(strengthData));
+            updateCharts();
+        });
+        
+        document.getElementById('leftArmReps').addEventListener('change', function() {
+            strengthData.left[selectedWeek] = parseInt(this.value) || 0;
+            localStorage.setItem('strengthData', JSON.stringify(strengthData));
+            updateCharts();
+        });
+        
+        // Initialize
+        initWorkoutTable();
+        updateDashboard();
+        
+        // Make sure charts render after page load
+        window.addEventListener('load', function() {
+            setTimeout(updateCharts, 100);
+        });
+    </script>
+</body>
+</html>
